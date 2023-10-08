@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "SnIOCleaner": {
+      "commandName": "Project",
+      "commandLineArgs": "-SOURCE D:\\dev\\replication\\export\\MegaContent-Demo -TARGET D:\\dev\\replication\\export\\_clean -MINIMAL"
+    }
+  }
+}
