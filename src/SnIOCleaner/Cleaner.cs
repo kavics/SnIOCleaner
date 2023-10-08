@@ -55,7 +55,7 @@ internal class Cleaner
                 if(content[fieldName] is JArray array)
                     if(array.Count == 1 && array[0].ToString() == "0")
                         content.RemoveField(fieldName);
-            if(true) // _isMinimal
+            if(_arguments.Minimal)
                 if (_skipIfMinimal.Contains(fieldName))
                     content.RemoveField(fieldName);
         }

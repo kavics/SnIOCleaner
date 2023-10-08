@@ -2,9 +2,15 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using SenseNet.IO.Implementations;
+using SenseNet.Tools.CommandLineArguments;
 using SnIOCleaner;
 
-var host = CreateHostBuilder(args).Build();
+var host = Host.CreateDefaultBuilder(args)
+    .ConfigureLogging(logging =>
+    {
+        logging.ClearProviders();
+        logging.AddConsole();
+    }).Build();
 
 var cancellation = new CancellationTokenSource();
 Console.CancelKeyPress += (s, e) =>
@@ -14,12 +20,18 @@ Console.CancelKeyPress += (s, e) =>
     e.Cancel = true;
 };
 
-await new Cleaner(Arguments.Parse(args), host.Services.GetRequiredService<ILogger<FsWriter>>()).RunAsync(cancellation.Token);
 
-static IHostBuilder CreateHostBuilder(string[] args) =>
-    Host.CreateDefaultBuilder(args)
-        .ConfigureLogging(logging =>
-        {
-            logging.ClearProviders();
-            logging.AddConsole();
-        });
+var arguments = new Arguments();
+try
+{
+    var result = ArgumentParser.Parse(args, arguments);
+    if (result.IsHelp)
+        Console.WriteLine(result.GetHelpText());
+    else
+        await new Cleaner(arguments, host.Services.GetRequiredService<ILogger<FsWriter>>()).RunAsync(cancellation.Token);
+}
+catch (ParsingException e)
+{
+    Console.WriteLine(e.FormattedMessage);
+    Console.WriteLine(e.Result.GetHelpText());
+}
