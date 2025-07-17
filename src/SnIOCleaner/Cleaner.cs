@@ -56,8 +56,9 @@ internal class Cleaner
                     if(array.Count == 1 && array[0].ToString() == "0")
                         content.RemoveField(fieldName);
             if(_arguments.Minimal)
-                if (_skipIfMinimal.Contains(fieldName))
-                    content.RemoveField(fieldName);
+                if(!readerContent.FieldNames.Contains("Password") || fieldName != "CreationDate") // Don't remove CreationDate of any user
+                    if (_skipIfMinimal.Contains(fieldName))
+                        content.RemoveField(fieldName);
         }
         return content;
     }
