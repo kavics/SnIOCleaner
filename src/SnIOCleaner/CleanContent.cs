@@ -31,17 +31,24 @@ internal class CleanContent : IContent
     public bool IsFolder => true;
     public bool HasData => _underlyingContent.HasData;
 
+    public bool CutOff { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
     public CleanContent(IContent content)
     {
         _underlyingContent = content;
         _fieldNames = _underlyingContent.FieldNames.ToList();
     }
 
-    public Task<Attachment[]> GetAttachmentsAsync() => _underlyingContent.GetAttachmentsAsync();
+    public Task<Attachment[]> GetAttachmentsAsync() => GetAttachmentsAsync(default);
 
     public void RemoveField(params string[] fieldName)
     {
         foreach (var item in fieldName)
             _fieldNames.Remove(item);
+    }
+
+    public Task<Attachment[]> GetAttachmentsAsync(CancellationToken cancel)
+    {
+        return _underlyingContent.GetAttachmentsAsync(default);
     }
 }

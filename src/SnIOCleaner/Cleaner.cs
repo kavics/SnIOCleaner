@@ -9,19 +9,20 @@ namespace SnIOCleaner;
 internal class Cleaner
 {
     private readonly Arguments _arguments;
-    private readonly ILogger<FsWriter> _logger;
+    private readonly ILogger<FsReader> _readerLogger;
+    private readonly ILogger<FsWriter> _writerLogger;
 
-    public Cleaner(Arguments arguments, ILogger<FsWriter> logger)
+    public Cleaner(Arguments arguments, ILogger<FsReader> readerLogger, ILogger<FsWriter> writerLogger)
     {
         _arguments = arguments;
-        _logger = logger;
+        _readerLogger = readerLogger;
+        _writerLogger = writerLogger;
     }
 
     public async Task RunAsync(CancellationToken cancel)
     {
-        var reader = new FsReader(Options.Create(new FsReaderArgs { Path = _arguments.SourcePath }));
-        var writer = new FsWriter(Options.Create(new FsWriterArgs {Path = _arguments.TargetPath}),
-            _logger);
+        var reader = new FsReader(Options.Create(new FsReaderArgs { Path = _arguments.SourcePath }), _readerLogger);
+        var writer = new FsWriter(Options.Create(new FsWriterArgs {Path = _arguments.TargetPath}), _writerLogger);
 
         while (await reader.ReadAllAsync(Array.Empty<string>(), cancel))
         {

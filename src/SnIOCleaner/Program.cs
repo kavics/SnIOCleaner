@@ -28,7 +28,9 @@ try
     if (result.IsHelp)
         Console.WriteLine(result.GetHelpText());
     else
-        await new Cleaner(arguments, host.Services.GetRequiredService<ILogger<FsWriter>>()).RunAsync(cancellation.Token);
+        await new Cleaner(arguments,
+            host.Services.GetRequiredService<ILogger<FsReader>>(),
+            host.Services.GetRequiredService<ILogger<FsWriter>>()).RunAsync(cancellation.Token);
 }
 catch (ParsingException e)
 {
